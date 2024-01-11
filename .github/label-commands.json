@@ -9,6 +9,7 @@
         { "command": "remove-lifecycle", "arg": "(stale|frozen)", "action": "remove-label", "label": "lifecycle/$1" }
     ],
     "allowedUsers": [
-        "ckotzbauer"
+        "ckotzbauer",
+        "romwoll-witt"
     ]
 }
