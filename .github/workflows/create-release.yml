@@ -21,25 +21,25 @@ jobs:
       version: ${{ github.event.inputs.version }}
       docker-platforms: linux/amd64,linux/arm64
       docker-tags: |
-        ghcr.io/romwol-witt/sbom-operator:${{ github.event.inputs.version }}
-        ghcr.io/romwol-witt/sbom-operator:latest
-      cosign-repository: ghcr.io/romwol-witt/sbom-operator-metadata
+        ghcr.io/${{ vars.GITHUB_REPOSITORY }}:${{ github.event.inputs.version }}
+        ghcr.io/${{ vars.GITHUB_REPOSITORY }}:latest
+      cosign-repository: ghcr.io/${{ vars.GITHUB_REPOSITORY }}-metadata
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
       ghcr-password: ${{ secrets.GHCR_PASSWORD }}
 
   job-image-vcn:
-    uses: romwol-witt/sbom-operator/.github/workflows/release-job-image.yml@main
+    uses: ${{ vars.GITHUB_REPOSITORY }}/.github/workflows/release-job-image.yml@main
     needs: [release]
     with:
       version: ${{ github.event.inputs.version }}
       job-image: vcn
       docker-platforms: linux/amd64
       docker-tags: |
-        ghcr.io/romwol-witt/sbom-operator/vcn:${{ github.event.inputs.version }}
-        ghcr.io/romwol-witt/sbom-operator/vcn:latest
-      cosign-repository: ghcr.io/romwol-witt/sbom-operator-metadata
+        ghcr.io/${{ vars.GITHUB_REPOSITORY }}/vcn:${{ github.event.inputs.version }}
+        ghcr.io/${{ vars.GITHUB_REPOSITORY }}/vcn:latest
+      cosign-repository: ghcr.io/${{ vars.GITHUB_REPOSITORY }}-metadata
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
