@@ -1,3 +1,10 @@
+## Version 1.0.2 (2024-01-12)
+
+### Common changes
+
+* [[`b73738ac`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/b73738ac)] - **chore**: temporary change the repo urls
+
+
 ## Version 1.0.1 (2024-01-12)
 
 ### Common changes
