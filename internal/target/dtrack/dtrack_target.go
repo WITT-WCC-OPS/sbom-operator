@@ -158,16 +158,16 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 		if g.parentProjectLabelKey != "" {
 			if podLabelKey == g.parentProjectLabelKey {
 				if podLabelValue != "" {
-					parentProjectNameParts := strings.Split(podLabelValue, ":")
+					parentProjectNameParts := strings.Split(podLabelValue, "-")
 					parentProjectName := parentProjectNameParts[0]
-					var parentProjectVersion string
+					parentProjectVersion := ""
 					if len(parentProjectNameParts) == 2 {
 						parentProjectVersion = parentProjectNameParts[1]
 					}
 					logrus.Debugf("Try to find parent project by name from label \"%v\" and value \"%v\"", podLabelKey, podLabelValue)
 					parentProject, err := client.Project.Lookup(context.Background(), parentProjectName, parentProjectVersion)
 					if err != nil {
-						logrus.Errorf("Could not find parent project \"%v\": %v", podLabelValue, err)
+						logrus.Errorf("Could not find parent project \"%v\": %v", parentProjectName, err)
 					} else {
 						project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
 					}
