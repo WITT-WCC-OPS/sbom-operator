@@ -1,3 +1,11 @@
+## Version 1.0.5 (2024-01-12)
+
+### Common changes
+
+* [[`b0e471a0`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/b0e471a0)] - **chore**: temporary change the repo urls
+* [[`4934d7e0`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/4934d7e0)] - **chore**: temporary change the repo urls
+
+
 ## Version 1.0.4 (2024-01-12)
 
 ### Common changes
