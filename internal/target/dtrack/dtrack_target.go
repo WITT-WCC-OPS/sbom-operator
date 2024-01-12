@@ -20,14 +20,15 @@ import (
 type DependencyTrackTarget struct {
 	clientOptions []dtrack.ClientOption
 
-	baseUrl            string
-	apiKey             string
-	podLabelTagMatcher string
-	caCertFile         string
-	clientCertFile     string
-	clientKeyFile      string
-	k8sClusterId       string
-	imageProjectMap    map[string]uuid.UUID
+	baseUrl                    string
+	apiKey                     string
+	podLabelTagMatcher         string
+	parentProjectAnnotationKey string
+	caCertFile                 string
+	clientCertFile             string
+	clientKeyFile              string
+	k8sClusterId               string
+	imageProjectMap            map[string]uuid.UUID
 }
 
 const (
@@ -37,15 +38,16 @@ const (
 	podNamespaceTagKey = "namespace"
 )
 
-func NewDependencyTrackTarget(baseUrl, apiKey, podLabelTagMatcher, caCertFile, clientCertFile, clientKeyFile, k8sClusterId string) *DependencyTrackTarget {
+func NewDependencyTrackTarget(baseUrl, apiKey, podLabelTagMatcher, caCertFile, clientCertFile, clientKeyFile, k8sClusterId string, parentProjectAnnotationKey string) *DependencyTrackTarget {
 	return &DependencyTrackTarget{
-		baseUrl:            baseUrl,
-		apiKey:             apiKey,
-		podLabelTagMatcher: podLabelTagMatcher,
-		caCertFile:         caCertFile,
-		clientCertFile:     clientCertFile,
-		clientKeyFile:      clientKeyFile,
-		k8sClusterId:       k8sClusterId,
+		baseUrl:                    baseUrl,
+		apiKey:                     apiKey,
+		podLabelTagMatcher:         podLabelTagMatcher,
+		caCertFile:                 caCertFile,
+		clientCertFile:             clientCertFile,
+		clientKeyFile:              clientKeyFile,
+		k8sClusterId:               k8sClusterId,
+		parentProjectAnnotationKey: parentProjectAnnotationKey,
 	}
 }
 
@@ -151,6 +153,32 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 		podLabel := fmt.Sprintf("%s=%s", podLabelKey, podLabelValue)
 		if !containsTag(project.Tags, podLabel) && (reg == nil || reg.MatchString(podLabelKey)) {
 			project.Tags = append(project.Tags, dtrack.Tag{Name: podLabel})
+		}
+	}
+
+	for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
+		if g.parentProjectAnnotationKey != "" {
+			if podAnnotationKey == g.parentProjectAnnotationKey {
+				if podAnnotationValue != "" {
+					parentProjectNameParts := strings.Split(podAnnotationValue, ":")
+					parentProjectName := parentProjectNameParts[0]
+					parentProjectVersion := "latest"
+					if len(parentProjectNameParts) == 2 {
+						parentProjectVersion = parentProjectNameParts[1]
+					}
+
+					logrus.Debugf("Try to find parent project by name from annotation \"%v\" and value \"%v\"", podAnnotationKey, podAnnotationValue)
+					parentProject, err := client.Project.Lookup(context.Background(), parentProjectName, parentProjectVersion)
+					if err != nil {
+						logrus.Errorf("Could not find parent project \"%v\": %v", parentProjectName, err)
+					} else {
+						logrus.Debugf("Found parent project with name \"%v:%v\" and UUID \"%v\"", parentProjectName, parentProjectVersion, parentProject.UUID)
+						project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
+					}
+				} else {
+					logrus.Errorf("Empty value for parent project annotation \"%s\". Skip setting parent project.", podAnnotationKey)
+				}
+			}
 		}
 	}
 
