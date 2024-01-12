@@ -178,7 +178,7 @@ spec:
     ...
 ...
 ```
-sbom-operator config:
+#### sbom-operator config:
 ```bash
 --dtrack-parent-project-annotation-key=my.parent.project
 --dtrack-project-name-annotation-key=my.project.name # IMPORTANT: The suffix regarding container name must not me mentioned here and must not include a "/"
