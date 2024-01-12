@@ -28,7 +28,6 @@ type DependencyTrackTarget struct {
 	clientCertFile        string
 	clientKeyFile         string
 	k8sClusterId          string
-	deleteOrphanProjects  bool
 	imageProjectMap       map[string]uuid.UUID
 }
 
