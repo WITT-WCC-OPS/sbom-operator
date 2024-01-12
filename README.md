@@ -149,7 +149,7 @@ Each image in the cluster is created as project with the full-image name (regist
 When there's no image-tag, but a digest, the digest is used as project-version.
 The `autoCreate` option of DT is used. You have to set the `--format` flag to `cyclonedx` with this target.
 
-
+---
 #### Custom dtrack project name:
 
 The key at kubernetes has to be suffixed with the container name the project is for. e.g. `my.project.name/my-nginx`.
@@ -158,6 +158,7 @@ The key at kubernetes has to be suffixed with the container name the project is 
 
 The value for a custom project name in dtrack by annotation at the specific Pod is written in the format of `project:version` or just `project` where version defaults to `latest`. E.g. `MyParentProject` or `MyParentProject:1.0`
 
+---
 
 #### Setting parent project at Dependency Track automatically:
 
@@ -166,6 +167,8 @@ The value for the parent project annotation at the specific Pod is written in th
 
 > [!IMPORTANT]
 > The suffix regarding container name must not be added to the config value and must not include `/`. e.g. `my.parent.project`
+
+---
 
 #### Example Pod Annotation:
 ```yaml
@@ -187,11 +190,14 @@ spec:
     ...
 ...
 ```
+---
+
 #### sbom-operator config:
 ```bash
 --dtrack-parent-project-annotation-key=my.parent.project
 --dtrack-project-name-annotation-key=my.project.name
 ```
+---
 
 ### Git
 
