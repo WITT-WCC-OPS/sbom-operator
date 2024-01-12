@@ -1,3 +1,10 @@
+## Version 1.0.4 (2024-01-12)
+
+### Common changes
+
+* [[`cebe5698`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/cebe5698)] - **chore**: temporary change the repo urls
+
+
 ## Version 1.0.3 (2024-01-12)
 
 ### Common changes
