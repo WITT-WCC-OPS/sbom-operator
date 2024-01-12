@@ -24,6 +24,7 @@ type DependencyTrackTarget struct {
 	apiKey                     string
 	podLabelTagMatcher         string
 	parentProjectAnnotationKey string
+	projectNameAnnotationKey   string
 	caCertFile                 string
 	clientCertFile             string
 	clientKeyFile              string
@@ -38,7 +39,7 @@ const (
 	podNamespaceTagKey = "namespace"
 )
 
-func NewDependencyTrackTarget(baseUrl, apiKey, podLabelTagMatcher, caCertFile, clientCertFile, clientKeyFile, k8sClusterId string, parentProjectAnnotationKey string) *DependencyTrackTarget {
+func NewDependencyTrackTarget(baseUrl, apiKey, podLabelTagMatcher, caCertFile, clientCertFile, clientKeyFile, k8sClusterId string, parentProjectAnnotationKey string, projectNameAnnotationKey string) *DependencyTrackTarget {
 	return &DependencyTrackTarget{
 		baseUrl:                    baseUrl,
 		apiKey:                     apiKey,
@@ -48,6 +49,7 @@ func NewDependencyTrackTarget(baseUrl, apiKey, podLabelTagMatcher, caCertFile, c
 		clientKeyFile:              clientKeyFile,
 		k8sClusterId:               k8sClusterId,
 		parentProjectAnnotationKey: parentProjectAnnotationKey,
+		projectNameAnnotationKey:   projectNameAnnotationKey,
 	}
 }
 
@@ -92,7 +94,33 @@ func (g *DependencyTrackTarget) Initialize() error {
 }
 
 func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
-	projectName, version := getRepoWithVersion(ctx.Image)
+	projectName := ""
+	version := ""
+
+	// Set custom project name by kubernetes annotation?
+	if g.projectNameAnnotationKey != "" {
+		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
+			if strings.HasPrefix(podAnnotationKey, g.projectNameAnnotationKey) {
+				if podAnnotationValue != "" {
+					// determine container name from annotation key
+					containerName := getContainerNameFromAnnotationKey(g.projectNameAnnotationKey, "/")
+					// correct container?
+					if containerName == ctx.Container.Name {
+						projectName, version = getNameAndVersionFromString(podAnnotationValue, ":")
+						logrus.Infof("Custom project name found at annotation %s for container %s: %s:%s", podAnnotationKey, containerName, projectName, version)
+						break
+					}
+				} else {
+					logrus.Errorf("Empty value for custom project name annotation \"%s\". Skip setting custom project name.", podAnnotationKey)
+				}
+			}
+		}
+	}
+
+	// If projectNameAnnotationKey is not set or could not be parsed correctly, use image instead
+	if projectName == "" || version == "" {
+		projectName, version = getRepoWithVersion(ctx.Image)
+	}
 
 	if ctx.Sbom == "" {
 		logrus.Infof("Empty SBOM - skip image (image=%s)", ctx.Image.ImageID)
@@ -155,29 +183,28 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 			project.Tags = append(project.Tags, dtrack.Tag{Name: podLabel})
 		}
 	}
-
-	for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
-		if g.parentProjectAnnotationKey != "" {
-			if podAnnotationKey == g.parentProjectAnnotationKey {
+	if g.parentProjectAnnotationKey != "" {
+		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
+			if strings.HasPrefix(podAnnotationKey, g.parentProjectAnnotationKey) {
+				// determine container name from annotation key
+				containerName := getContainerNameFromAnnotationKey(g.parentProjectAnnotationKey, "/")
 				if podAnnotationValue != "" {
-					parentProjectNameParts := strings.Split(podAnnotationValue, ":")
-					parentProjectName := parentProjectNameParts[0]
-					parentProjectVersion := "latest"
-					if len(parentProjectNameParts) == 2 {
-						parentProjectVersion = parentProjectNameParts[1]
-					}
-
-					logrus.Debugf("Try to find parent project by name from annotation \"%v\" and value \"%v\"", podAnnotationKey, podAnnotationValue)
-					parentProject, err := client.Project.Lookup(context.Background(), parentProjectName, parentProjectVersion)
-					if err != nil {
-						logrus.Errorf("Could not find parent project \"%v\": %v", parentProjectName, err)
-					} else {
-						logrus.Debugf("Found parent project with name \"%v:%v\" and UUID \"%v\"", parentProjectName, parentProjectVersion, parentProject.UUID)
-						project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
+					// correct container found?
+					if containerName == ctx.Container.Name {
+						parentProjectName, parentProjectVersion := getNameAndVersionFromString(podAnnotationValue, ":")
+						logrus.Debugf("Try to find parent project by name from annotation \"%s\", for container %s and value \"%s\"", podAnnotationKey, containerName, podAnnotationValue)
+						parentProject, err := client.Project.Lookup(context.Background(), parentProjectName, parentProjectVersion)
+						if err != nil {
+							logrus.Errorf("Could not find parent project \"%v\": %v", parentProjectName, err)
+						} else {
+							logrus.Infof("Found parent project with name \"%v:%v\" and UUID \"%v\" for container %s", parentProjectName, parentProjectVersion, parentProject.UUID, containerName)
+							project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
+						}
 					}
 				} else {
 					logrus.Errorf("Empty value for parent project annotation \"%s\". Skip setting parent project.", podAnnotationKey)
 				}
+				break
 			}
 		}
 	}
@@ -317,6 +344,25 @@ func (g *DependencyTrackTarget) Remove(images []*libk8s.RegistryImage) {
 			}
 		}
 	}
+}
+
+func getNameAndVersionFromString(input string, delimiter string) (string, string) {
+	parts := strings.Split(input, delimiter)
+	name := parts[0]
+	version := "latest"
+	if len(parts) == 2 {
+		version = parts[1]
+	}
+	return name, version
+}
+
+func getContainerNameFromAnnotationKey(annotationKey string, delimiter string) string {
+	parts := strings.Split(annotationKey, delimiter)
+	containerName := ""
+	if len(parts) == 2 {
+		containerName = parts[1]
+	}
+	return containerName
 }
 
 func containsTag(tags []dtrack.Tag, tagString string) bool {

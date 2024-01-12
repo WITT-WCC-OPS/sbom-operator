@@ -142,27 +142,38 @@ not present in the cluster anymore are removed from the configured targets (exce
 | `dtrack-client-cert-file` | `true` when `dtrack-ca-cert-file` is provided | `""` | Client-Certificate filepath when using mTLS to connect to dtrack |
 | `dtrack-client-key-file` | `true` when `dtrack-ca-cert-file` is provided | `""` | Client-Key filepath when using mTLS to connect to dtrack |
 | `dtrack-parent-project-annotation-key` | `false` | `""` | Kubernetes Pod Annotation Key to set parent project automatically, e.g. "my.pod.annotation" |
+| `dtrack-project-name-annotation-key` | `false` | `""` | Kubernetes Pod Annotation Key to set custom dtrack project name automatically, e.g. "my.pod.annotation" |
 | `kubernetes-cluster-id` | `false` | `"default"` | Kubernetes Cluster ID (to be used in Dependency-Track or Job-Images) |
 
 Each image in the cluster is created as project with the full-image name (registry and image-path without tag) and the image-tag as project-version.
 When there's no image-tag, but a digest, the digest is used as project-version.
 The `autoCreate` option of DT is used. You have to set the `--format` flag to `cyclonedx` with this target.
 
+##### Custom dtrack project name:
+The key at kubernetes has to be suffixed with the container name the project is for. e.g. `my.project.name/my-nginx`.
+> [!IMPORTANT]
+> The suffix regarding container name must not be added to the config value and must not include `/`. e.g. `my.project.name`
+
+The value for a custom project name in dtrack by annotation at the specific Pod is written in the format of `project:version` or just `project` where version defaults to `latest`. E.g. `MyParentProject` or `MyParentProject:1.0`
+
 ##### Setting parent project at Dependency Track automatically:
-The value for the parent project annotation at the specific Pod is written in the format of "project:version" or just "project" where version defaults to "latest". E.g. "MyParentProject" or "MyParentProject:1.0"
+The value for the parent project annotation at the specific Pod is written in the format of `project:version` or just `project` where version defaults to `latest`. E.g. `MyParentProject` or `MyParentProject:1.0`
 
 Example Pod Annotation:
-```
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
   annotations:
     my.parent.project: MyProject
+    my.project.name/my-nginx: MyNginxProject:1.0
+    my.project.name/my-side: MySidecarProject:1.0.1
 ...
 ```
 sbom-operator config:
-```
+```bash
 --dtrack-parent-project-annotation-key=my.parent.project
+--dtrack-project-name-annotation-key=my.project.name # IMPORTANT: The suffix regarding container name must not me mentioned here and must not include a "/"
 ```
 
 
