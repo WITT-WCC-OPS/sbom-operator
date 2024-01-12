@@ -141,8 +141,8 @@ not present in the cluster anymore are removed from the configured targets (exce
 | `dtrack-ca-cert-file` | `false` | `""` | CA-Certificate filepath when using mTLS to connect to dtrack |
 | `dtrack-client-cert-file` | `true` when `dtrack-ca-cert-file` is provided | `""` | Client-Certificate filepath when using mTLS to connect to dtrack |
 | `dtrack-client-key-file` | `true` when `dtrack-ca-cert-file` is provided | `""` | Client-Key filepath when using mTLS to connect to dtrack |
-| `dtrack-parent-project-annotation-key` | `false` | `""` | Kubernetes Pod Annotation Key to set parent project automatically, e.g. "my.pod.annotation" |
-| `dtrack-project-name-annotation-key` | `false` | `""` | Kubernetes Pod Annotation Key to set custom dtrack project name automatically, e.g. "my.pod.annotation" |
+| `dtrack-parent-project-annotation-key` | `false` | `""` | Kubernetes pod annotation key to set parent project automatically, e.g. "my.pod.annotation" |
+| `dtrack-project-name-annotation-key` | `false` | `""` | Kubernetes pod annotation key to set custom dtrack project name automatically, e.g. "my.pod.annotation" |
 | `kubernetes-cluster-id` | `false` | `"default"` | Kubernetes Cluster ID (to be used in Dependency-Track or Job-Images) |
 
 Each image in the cluster is created as project with the full-image name (registry and image-path without tag) and the image-tag as project-version.
@@ -168,6 +168,14 @@ metadata:
     my.parent.project: MyProject
     my.project.name/my-nginx: MyNginxProject:1.0
     my.project.name/my-side: MySidecarProject:1.0.1
+spec:
+  containers:
+    - image: nginx:latest
+      name: my-nginx
+    ...
+    - image: some-other-image:latest
+      name: my-sidecar
+    ...
 ...
 ```
 sbom-operator config:
