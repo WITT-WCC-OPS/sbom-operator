@@ -86,6 +86,7 @@ All parameters are cli-flags. The flags can be configured as args or as environm
 | `namespace-label-selector` | `false` | `""` | Kubernetes Label-Selector for namespaces. |
 | `fallback-image-pull-secret` | `false` | `""` | Kubernetes Pull-Secret Name to load as a fallback when all others fail (must be in the same namespace as the sbom-operator) |
 | `registry-proxy` | `false` | `[]` | Proxy-Registry-Hosts to use. Flag can be used multiple times. Value-Mapping e.g. `docker.io=ghcr.io` |
+| `delete-orphan-projects` | `false` | `true` | Delete orphan projects automatically |
 
 
 ### Example Helm-Config
@@ -140,11 +141,29 @@ not present in the cluster anymore are removed from the configured targets (exce
 | `dtrack-ca-cert-file` | `false` | `""` | CA-Certificate filepath when using mTLS to connect to dtrack |
 | `dtrack-client-cert-file` | `true` when `dtrack-ca-cert-file` is provided | `""` | Client-Certificate filepath when using mTLS to connect to dtrack |
 | `dtrack-client-key-file` | `true` when `dtrack-ca-cert-file` is provided | `""` | Client-Key filepath when using mTLS to connect to dtrack |
+| `dtrack-parent-project-annotation-key` | `false` | `""` | Kubernetes Pod Annotation Key to set parent project automatically, e.g. "my.pod.annotation" |
 | `kubernetes-cluster-id` | `false` | `"default"` | Kubernetes Cluster ID (to be used in Dependency-Track or Job-Images) |
 
 Each image in the cluster is created as project with the full-image name (registry and image-path without tag) and the image-tag as project-version.
 When there's no image-tag, but a digest, the digest is used as project-version.
 The `autoCreate` option of DT is used. You have to set the `--format` flag to `cyclonedx` with this target.
+
+##### Setting parent project at Dependency Track automatically:
+The value for the parent project annotation at the specific Pod is written in the format of "project:version" or just "project" where version defaults to "latest". E.g. "MyParentProject" or "MyParentProject:1.0"
+
+Example Pod Annotation:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    my.parent.project: MyProject
+...
+```
+sbom-operator config:
+```
+--dtrack-parent-project-annotation-key=my.parent.project
+```
 
 
 ### Git
