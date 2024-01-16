@@ -100,22 +100,25 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 	logrus.Debugf("%v", g)
 	// Set custom project name by kubernetes annotation?
 	if g.projectNameAnnotationKey != "" {
-		logrus.Debugf("Try to set project name by configured annotationkey %s", g.projectNameAnnotationKey)
+		logrus.Debugf(`Try to set project name by configured annotationkey "%s"`, g.projectNameAnnotationKey)
 		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
-			logrus.Debugf("AnnotationKey %s starts with %s?", podAnnotationKey, g.projectNameAnnotationKey)
 			if strings.HasPrefix(podAnnotationKey, g.projectNameAnnotationKey) {
 				if podAnnotationValue != "" {
 					// determine container name from annotation key
-					containerName := getContainerNameFromAnnotationKey(g.projectNameAnnotationKey, "/")
-					logrus.Debugf("ContainerName found: %s", containerName)
-					// correct container?
-					if containerName == ctx.Container.Name {
-						projectName, version = getNameAndVersionFromString(podAnnotationValue, ":")
-						logrus.Infof("Custom project name found at annotation %s for container %s: %s:%s", podAnnotationKey, containerName, projectName, version)
-						break
+					containerName := getContainerNameFromAnnotationKey(podAnnotationKey, "/")
+					if containerName != "" {
+						logrus.Debugf(`ContainerName found: "%s"`, containerName)
+						// correct container?
+						if containerName == ctx.Container.Name {
+							projectName, version = getNameAndVersionFromString(podAnnotationValue, ":")
+							logrus.Infof(`Custom project name found at annotation "%s" for container "%s": "%s:%s"`, podAnnotationKey, containerName, projectName, version)
+							break
+						}
+					} else {
+						logrus.Errorf(`Containername could not be determined from annotation "%s". Skip setting project name.`, podAnnotationKey)
 					}
 				} else {
-					logrus.Errorf("Empty value for custom project name annotation \"%s\". Skip setting custom project name.", podAnnotationKey)
+					logrus.Errorf(`Empty value for custom project name annotation "%s". Skip setting custom project name.`, podAnnotationKey)
 				}
 			}
 		}
@@ -149,7 +152,7 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 		return err
 	}
 
-	logrus.Infof("Uploaded SBOM2 (upload-token=%s)", uploadToken)
+	logrus.Infof("Uploaded SBOM (upload-token=%s)", uploadToken)
 
 	project, err := client.Project.Lookup(context.Background(), projectName, version)
 	if err != nil {
@@ -193,10 +196,7 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 			logrus.Debugf("AnnotationKey %s starts with %s?", podAnnotationKey, g.parentProjectAnnotationKey)
 			if strings.HasPrefix(podAnnotationKey, g.parentProjectAnnotationKey) {
 				// determine container name from annotation key
-				containerName := getContainerNameFromAnnotationKey(g.parentProjectAnnotationKey, "/")
-				logrus.Debugf("ContainerName found in %s: %s", g.parentProjectAnnotationKey, containerName)
-				logrus.Debugf("Container found: %+v\n", ctx.Container)
-
+				containerName := getContainerNameFromAnnotationKey(podAnnotationKey, "/")
 				if containerName != "" {
 					if podAnnotationValue != "" {
 						// correct container found?
@@ -205,18 +205,17 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 							logrus.Debugf("Try to find parent project by name from annotation \"%s\", for container %s and value \"%s\"", podAnnotationKey, containerName, podAnnotationValue)
 							parentProject, err := client.Project.Lookup(context.Background(), parentProjectName, parentProjectVersion)
 							if err != nil {
-								logrus.Errorf("Could not find parent project \"%v\": %v", parentProjectName, err)
-								logrus.Debugf("Could not find parent project \"%v\": %v", parentProjectName, err)
+								logrus.Errorf(`Could not find parent project "%s": "%+v\n"`, parentProjectName, err)
 							} else {
-								logrus.Infof("Found parent project with name \"%v:%v\" and UUID \"%v\" for container %s", parentProjectName, parentProjectVersion, parentProject.UUID, containerName)
+								logrus.Infof(`Found parent project with name "%s:%s" and UUID "%s" for container "%s"`, parentProjectName, parentProjectVersion, parentProject.UUID, containerName)
 								project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
 							}
 						}
 					} else {
-						logrus.Errorf("Empty value for parent project annotation \"%s\" or containername \"%s\". Skip setting parent project.", podAnnotationKey, containerName)
+						logrus.Errorf(`Empty value for parent project annotation "%s". Skip setting parent project.`, podAnnotationKey)
 					}
 				} else {
-					logrus.Errorf("Containername could not be determined from annotation \"%s\". Skip setting parent project.", podAnnotationKey)
+					logrus.Errorf(`Containername could not be determined from annotation "%s". Skip setting parent project.`, podAnnotationKey)
 				}
 				break
 			}
@@ -372,7 +371,6 @@ func getNameAndVersionFromString(input string, delimiter string) (string, string
 
 func getContainerNameFromAnnotationKey(annotationKey string, delimiter string) string {
 	parts := strings.Split(annotationKey, delimiter)
-	logrus.Debugf("%s split by %s: %+v\n", annotationKey, delimiter, parts)
 	containerName := ""
 	if len(parts) == 2 {
 		containerName = parts[1]
