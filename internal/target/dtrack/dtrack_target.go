@@ -190,6 +190,7 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 			project.Tags = append(project.Tags, dtrack.Tag{Name: podLabel})
 		}
 	}
+
 	if g.parentProjectAnnotationKey != "" {
 		logrus.Debugf("Try to set parent project by configured annotationkey %s", g.parentProjectAnnotationKey)
 		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
@@ -207,7 +208,7 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 							if err != nil {
 								logrus.Errorf(`Could not find parent project "%s": "%+v\n"`, parentProjectName, err)
 							} else {
-								logrus.Infof(`Found parent project with name "%s:%s" and UUID "%s" for container "%s"`, parentProjectName, parentProjectVersion, parentProject.UUID, containerName)
+								logrus.Infof(`Found parent project with name "%s:%s" and UUID "%s" for container "%s": %+v\n`, parentProjectName, parentProjectVersion, parentProject.UUID, containerName, parentProject)
 								project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
 							}
 						}
@@ -221,6 +222,8 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 			}
 		}
 	}
+
+	logrus.Debugf(`Project: %+v\n`, project)
 
 	_, err = client.Project.Update(context.Background(), project)
 	if err != nil {
