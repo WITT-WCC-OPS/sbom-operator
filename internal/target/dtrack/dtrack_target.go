@@ -102,10 +102,12 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 	if g.projectNameAnnotationKey != "" {
 		logrus.Debugf("Try to set project name by configured annotationkey %s", g.projectNameAnnotationKey)
 		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
+			logrus.Debugf("AnnotationKey %s starts with %s?", podAnnotationKey, g.projectNameAnnotationKey)
 			if strings.HasPrefix(podAnnotationKey, g.projectNameAnnotationKey) {
 				if podAnnotationValue != "" {
 					// determine container name from annotation key
 					containerName := getContainerNameFromAnnotationKey(g.projectNameAnnotationKey, "/")
+					logrus.Debugf("ContainerName found: %s", &containerName)
 					// correct container?
 					if containerName == ctx.Container.Name {
 						projectName, version = getNameAndVersionFromString(podAnnotationValue, ":")
@@ -154,7 +156,6 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 		logrus.Errorf("Could not find project: %v", err)
 		return err
 	}
-	logrus.Infof("%v", project)
 
 	kubernetesClusterTag := kubernetesCluster + "=" + g.k8sClusterId
 	if !containsTag(project.Tags, kubernetesClusterTag) {
@@ -189,9 +190,11 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 	if g.parentProjectAnnotationKey != "" {
 		logrus.Debugf("Try to set parent project by configured annotationkey %s", g.parentProjectAnnotationKey)
 		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
+			logrus.Debugf("AnnotationKey %s starts with %s?", podAnnotationKey, g.parentProjectAnnotationKey)
 			if strings.HasPrefix(podAnnotationKey, g.parentProjectAnnotationKey) {
 				// determine container name from annotation key
 				containerName := getContainerNameFromAnnotationKey(g.parentProjectAnnotationKey, "/")
+				logrus.Debugf("ContainerName found: %s", &containerName)
 				if podAnnotationValue != "" {
 					// correct container found?
 					if containerName == ctx.Container.Name {
@@ -212,8 +215,6 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 			}
 		}
 	}
-
-	logrus.Infof("%v", project)
 
 	_, err = client.Project.Update(context.Background(), project)
 	if err != nil {
