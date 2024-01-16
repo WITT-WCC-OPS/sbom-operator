@@ -27,7 +27,7 @@ type Config struct {
 	DtrackClientCertFile             string   `yaml:"dtrackClientCertFile" env:"SBOM_DTRACK_CLIENT_CERT_FILE" flag:"dtrack-client-cert-file"`
 	DtrackClientKeyFile              string   `yaml:"dtrackClientKeyFile" env:"SBOM_DTRACK_CLIENT_KEY_FILE" flag:"dtrack-client-key-file"`
 	DtrackParentProjectAnnotationKey string   `yaml:"dtrackParentProjectAnnotationKey" env:"SBOM_DTRACK_PARENT_PROJECT_ANNOTATION_KEY" flag:"dtrack-parent-project-annotation-key"`
-	DtrackProjectNameAnnotationKey   string   `yaml:"dtrackParentProjectAnnotationKey" env:"SBOM_DTRACK_PARENT_PROJECT_ANNOTATION_KEY" flag:"dtrack-parent-project-annotation-key"`
+	DtrackProjectNameAnnotationKey   string   `yaml:"dtrackProjectNameAnnotationKey" env:"SBOM_DTRACK_PROJECT_NAME_ANNOTATION_KEY" flag:"dtrack-project-name-annotation-key"`
 	KubernetesClusterId              string   `yaml:"kubernetesClusterId" env:"SBOM_KUBERNETES_CLUSTER_ID" flag:"kubernetes-cluster-id"`
 	JobImage                         string   `yaml:"jobImage" env:"SBOM_JOB_IMAGE" flag:"job-image"`
 	JobImagePullSecret               string   `yaml:"jobImagePullSecret" env:"SBOM_JOB_IMAGE_PULL_SECRET" flag:"job-image-pull-secret"`

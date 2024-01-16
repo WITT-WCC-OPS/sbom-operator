@@ -203,10 +203,10 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 						// correct container found?
 						if containerName == ctx.Container.Name {
 							parentProjectName, parentProjectVersion := getNameAndVersionFromString(podAnnotationValue, ":")
-							logrus.Debugf("Try to find parent project by name from annotation \"%s\", for container %s and value \"%s\"", podAnnotationKey, containerName, podAnnotationValue)
+							logrus.Debugf("Try to find parent project by name from annotation \"%s\", for container %s, parentProjectName \"%s\" and parentProjectVersion \"%s\"", podAnnotationKey, containerName, parentProjectName, parentProjectVersion)
 							parentProject, err := client.Project.Lookup(context.Background(), parentProjectName, parentProjectVersion)
 							if err != nil {
-								logrus.Errorf(`Could not find parent project "%s": "%+v\n"`, parentProjectName, err)
+								logrus.WithError(err).Errorf(`Could not find parent project "%s"`, parentProjectName)
 							} else {
 								logrus.Infof(`Found parent project with name "%s:%s" and UUID "%s" for container "%s": %+v\n`, parentProjectName, parentProjectVersion, parentProject.UUID, containerName, parentProject)
 								project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
@@ -227,7 +227,7 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 
 	_, err = client.Project.Update(context.Background(), project)
 	if err != nil {
-		logrus.WithError(err).Errorf("Could not update project tags")
+		logrus.WithError(err).Errorf("Could not update project")
 	}
 
 	if g.imageProjectMap == nil {
