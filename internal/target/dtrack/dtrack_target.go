@@ -194,7 +194,8 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 			if strings.HasPrefix(podAnnotationKey, g.parentProjectAnnotationKey) {
 				// determine container name from annotation key
 				containerName := getContainerNameFromAnnotationKey(g.parentProjectAnnotationKey, "/")
-				logrus.Debugf("ContainerName found: %s", &containerName)
+				logrus.Debugf("ContainerName found: %s", containerName)
+				logrus.Debugf("Container found: %+v\n", ctx.Container)
 				if podAnnotationValue != "" {
 					// correct container found?
 					if containerName == ctx.Container.Name {
@@ -203,6 +204,7 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 						parentProject, err := client.Project.Lookup(context.Background(), parentProjectName, parentProjectVersion)
 						if err != nil {
 							logrus.Errorf("Could not find parent project \"%v\": %v", parentProjectName, err)
+							logrus.Debugf("Could not find parent project \"%v\": %v", parentProjectName, err)
 						} else {
 							logrus.Infof("Found parent project with name \"%v:%v\" and UUID \"%v\" for container %s", parentProjectName, parentProjectVersion, parentProject.UUID, containerName)
 							project.ParentRef = &dtrack.ParentRef{UUID: parentProject.UUID}
