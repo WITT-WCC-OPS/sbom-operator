@@ -1,3 +1,10 @@
+## Version 2.0.6 (2024-01-16)
+
+### Common changes
+
+* [[`fbb26963`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/fbb26963)] - **chore**: release test
+
+
 ## Version 2.0.5 (2024-01-16)
 
 ### Common changes
