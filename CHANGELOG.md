@@ -1,3 +1,11 @@
+## Version 2.0.4 (2024-01-16)
+
+### Common changes
+
+* [[`a5a3a574`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/a5a3a574)] - **chore**: release test
+* [[`76e38856`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/76e38856)] - **chore**: release test
+
+
 ## Version 2.0.2 (2024-01-16)
 
 ### Common changes
