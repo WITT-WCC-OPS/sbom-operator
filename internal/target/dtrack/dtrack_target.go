@@ -97,8 +97,10 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 	projectName := ""
 	version := ""
 
+	logrus.Debugf("%v", g)
 	// Set custom project name by kubernetes annotation?
 	if g.projectNameAnnotationKey != "" {
+		logrus.Debugf("Try to set project name by configured annotationkey %s", g.projectNameAnnotationKey)
 		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
 			if strings.HasPrefix(podAnnotationKey, g.projectNameAnnotationKey) {
 				if podAnnotationValue != "" {
@@ -145,13 +147,14 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 		return err
 	}
 
-	logrus.Infof("Uploaded SBOM (upload-token=%s)", uploadToken)
+	logrus.Infof("Uploaded SBOM2 (upload-token=%s)", uploadToken)
 
 	project, err := client.Project.Lookup(context.Background(), projectName, version)
 	if err != nil {
 		logrus.Errorf("Could not find project: %v", err)
 		return err
 	}
+	logrus.Infof("%v", project)
 
 	kubernetesClusterTag := kubernetesCluster + "=" + g.k8sClusterId
 	if !containsTag(project.Tags, kubernetesClusterTag) {
@@ -184,6 +187,7 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 		}
 	}
 	if g.parentProjectAnnotationKey != "" {
+		logrus.Debugf("Try to set parent project by configured annotationkey %s", g.parentProjectAnnotationKey)
 		for podAnnotationKey, podAnnotationValue := range ctx.Pod.Annotations {
 			if strings.HasPrefix(podAnnotationKey, g.parentProjectAnnotationKey) {
 				// determine container name from annotation key
@@ -208,6 +212,8 @@ func (g *DependencyTrackTarget) ProcessSbom(ctx *target.TargetContext) error {
 			}
 		}
 	}
+
+	logrus.Infof("%v", project)
 
 	_, err = client.Project.Update(context.Background(), project)
 	if err != nil {
