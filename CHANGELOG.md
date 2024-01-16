@@ -1,3 +1,40 @@
+## Version 2.0.0 (2024-01-16)
+
+### Features and improvements
+
+* [[`f0263d49`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/f0263d49)] - **feat**: add new flags to toggle deletion of orphan projects, setting parent project and dtrack project name by k8s annotation
+* [[`98d8bec9`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/98d8bec9)] - **feat**: add two new flags to toggle deletion of orphan projects and setting parent project by k8s annotation
+* [[`20e68faf`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/20e68faf)] - **feat**: add two new flags to toggle deletion of orphan projects and setting parent project by k8s annotation
+
+### Common changes
+
+* [[`e74b5ea5`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/e74b5ea5)] - **chore**: release test
+* [[`36846816`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/36846816)] - **chore**: readme
+* [[`9809c2a1`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/9809c2a1)] - **chore**: readme
+* [[`20d44acc`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/20d44acc)] - **chore**: readme
+* [[`f232593d`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/f232593d)] - **chore**: readme
+* [[`8b679936`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/8b679936)] - **chore**: readme
+* [[`7f6eb00b`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/7f6eb00b)] - **chore**: readme
+* [[`b04d14fb`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/b04d14fb)] - **chore**: readme
+* [[`81beca8a`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/81beca8a)] - **chore**: release 1.0.5
+* [[`b0e471a0`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/b0e471a0)] - **chore**: temporary change the repo urls
+* [[`4934d7e0`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/4934d7e0)] - **chore**: temporary change the repo urls
+* [[`a9d66f74`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/a9d66f74)] - **chore**: release 1.0.4
+* [[`cebe5698`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/cebe5698)] - **chore**: temporary change the repo urls
+* [[`8a3989d8`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/8a3989d8)] - **chore**: release 1.0.3
+* [[`6ef30f92`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/6ef30f92)] - **chore**: temporary change the repo urls
+* [[`bdee4313`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/bdee4313)] - **chore**: release 1.0.2
+* [[`b73738ac`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/b73738ac)] - **chore**: temporary change the repo urls
+* [[`354e227c`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/354e227c)] - **chore**: release 1.0.1
+* [[`9e173775`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/9e173775)] - **chore**: temporary change the repo urls
+* [[`c6e6fe71`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/c6e6fe71)] - **chore**: release 1.0
+* [[`38e9c23c`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/38e9c23c)] - **chore**: temporary change the repo urls
+* [[`194e5caf`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/194e5caf)] - **chore**: temporary change the repo urls
+* [[`15507a42`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/15507a42)] - **chore**: temporary change the repo urls
+* [[`ba7d80b2`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/ba7d80b2)] - **chore**: temporary change the repo urls
+* [[`30e416d0`](https://github.com/romwol-witt&#x2F;sbom-operator/commit/30e416d0)] - **chore**: temporary change the repo urls
+
+
 ## Version 0.30.0 (2023-12-12)
 
 ### Bug fixes
