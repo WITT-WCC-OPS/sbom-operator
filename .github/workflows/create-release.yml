@@ -1,5 +1,11 @@
 name: create-release
 
+permissions:
+  id-token: write
+  contents: write
+  packages: write
+  actions: read
+
 on:
   workflow_dispatch:
     inputs:
@@ -15,9 +21,9 @@ jobs:
       version: ${{ github.event.inputs.version }}
       docker-platforms: linux/amd64,linux/arm64
       docker-tags: |
-        ghcr.io/ckotzbauer/sbom-operator:${{ github.event.inputs.version }}
-        ghcr.io/ckotzbauer/sbom-operator:latest
-      cosign-repository: ghcr.io/ckotzbauer/sbom-operator-metadata
+        ghcr.io/romwol-witt/sbom-operator:${{ github.event.inputs.version }}
+        ghcr.io/romwol-witt/sbom-operator:latest
+      cosign-repository: ghcr.io/romwol-witt/sbom-operator-metadata
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
@@ -31,9 +37,9 @@ jobs:
       job-image: vcn
       docker-platforms: linux/amd64
       docker-tags: |
-        ghcr.io/ckotzbauer/sbom-operator/vcn:${{ github.event.inputs.version }}
-        ghcr.io/ckotzbauer/sbom-operator/vcn:latest
-      cosign-repository: ghcr.io/ckotzbauer/sbom-operator-metadata
+        ghcr.io/romwol-witt/sbom-operator/vcn:${{ github.event.inputs.version }}
+        ghcr.io/romwol-witt/sbom-operator/vcn:latest
+      cosign-repository: ghcr.io/romwol-witt/sbom-operator-metadata
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
