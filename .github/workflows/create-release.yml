@@ -25,7 +25,7 @@ jobs:
         ghcr.io/witt-wcc-ops/sbom-operator:latest
       cosign-repository: ghcr.io/WITT-WCC-OPS/sbom-operator-metadata
     secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GHCR_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
       ghcr-password: ${{ secrets.GHCR_PASSWORD }}
 
@@ -41,7 +41,7 @@ jobs:
         ghcr.io/witt-wcc-ops/sbom-operator/vcn:latest
       cosign-repository: ghcr.io/WITT-WCC-OPS/sbom-operator-metadata
     secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GHCR_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
       ghcr-password: ${{ secrets.GHCR_PASSWORD }}
 
