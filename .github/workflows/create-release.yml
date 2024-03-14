@@ -23,7 +23,7 @@ jobs:
       docker-tags: |
         ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator:${{ github.event.inputs.version }}
         ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator:latest
-      cosign-repository: ghcr.io/WITT-WCC-OPS/sbom-operator-metadata
+      cosign-repository: ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator-metadata
     secrets:
       token: ${{ secrets.GHCR_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
@@ -39,7 +39,7 @@ jobs:
       docker-tags: |
         ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator/vcn:${{ github.event.inputs.version }}
         ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator/vcn:latest
-      cosign-repository: ghcr.io/WITT-WCC-OPS/sbom-operator-metadata
+      cosign-repository: ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator-metadata
     secrets:
       token: ${{ secrets.GHCR_TOKEN }}
       pat: ${{ secrets.REPO_ACCESS }}
