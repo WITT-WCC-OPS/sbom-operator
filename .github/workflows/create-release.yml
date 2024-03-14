@@ -21,8 +21,8 @@ jobs:
       version: ${{ github.event.inputs.version }}
       docker-platforms: linux/amd64,linux/arm64
       docker-tags: |
-        ghcr.io/witt-wcc-ops/sbom-operator:${{ github.event.inputs.version }}
-        ghcr.io/witt-wcc-ops/sbom-operator:latest
+        ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator:${{ github.event.inputs.version }}
+        ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator:latest
       cosign-repository: ghcr.io/WITT-WCC-OPS/sbom-operator-metadata
     secrets:
       token: ${{ secrets.GHCR_TOKEN }}
@@ -37,8 +37,8 @@ jobs:
       job-image: vcn
       docker-platforms: linux/amd64
       docker-tags: |
-        ghcr.io/witt-wcc-ops/sbom-operator/vcn:${{ github.event.inputs.version }}
-        ghcr.io/witt-wcc-ops/sbom-operator/vcn:latest
+        ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator/vcn:${{ github.event.inputs.version }}
+        ghcr.io/maxezeg-otto/witt-wcc-ops/sbom-operator/vcn:latest
       cosign-repository: ghcr.io/WITT-WCC-OPS/sbom-operator-metadata
     secrets:
       token: ${{ secrets.GHCR_TOKEN }}
